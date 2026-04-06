@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
  <script referrerpolicy="no-referrer-when-downgrade" src="https://dev.visualwebsiteoptimizer.com/cloud-run-test/final/3000252.js" id="vwoCode"></script>
- 
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modern SPA Demo</title>
+  <title>Modern SPA with Routing</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 font-sans">
@@ -14,9 +13,9 @@
 <nav class="bg-white shadow p-4 flex justify-between">
   <div class="font-bold">Modern SPA</div>
   <div class="space-x-2">
-    <button onclick="navigate('home')" class="px-3 py-1 bg-blue-500 text-white rounded">Home</button>
-    <button onclick="navigate('form')" class="px-3 py-1 bg-green-500 text-white rounded">Form</button>
-    <button onclick="navigate('widgets')" class="px-3 py-1 bg-purple-500 text-white rounded">Widgets</button>
+    <button onclick="navigate('/home')" class="px-3 py-1 bg-blue-500 text-white rounded">Home</button>
+    <button onclick="navigate('/form')" class="px-3 py-1 bg-green-500 text-white rounded">Form</button>
+    <button onclick="navigate('/widgets')" class="px-3 py-1 bg-purple-500 text-white rounded">Widgets</button>
   </div>
 </nav>
 
@@ -38,97 +37,63 @@ function baseLayout(content) {
     </div>
   `;
 
-  // Shadow DOM attach
+  // Shadow DOM
   const host = document.getElementById('shadow-host');
   const shadow = host.attachShadow({ mode: 'open' });
 
   shadow.innerHTML = `
     <style>
-      .box {
-        padding: 16px;
-        background: #111827;
-        color: white;
-        border-radius: 10px;
-        margin-top: 20px;
-      }
-      button {
-        background: teal;
-        color: white;
-        padding: 6px 10px;
-        border: none;
-        border-radius: 6px;
-        margin-top: 10px;
-      }
+      .box { padding:16px; background:#111827; color:white; border-radius:10px; margin-top:20px; }
     </style>
     <div class="box">
       <h3>Shadow DOM Widget</h3>
-      <p>Isolated styles + behavior</p>
-      <button onclick="alert('Inside Shadow DOM')">Click</button>
+      <p>URL changes but no reload</p>
     </div>
   `;
 }
 
-function navigate(route) {
-
-  if (route === 'home') {
+function render(route) {
+  if (route === '/home') {
     baseLayout(`
       <div class="bg-white p-6 rounded-xl shadow">
         <h1 class="text-xl font-bold">Home</h1>
-        <p>Modern SPA with multiple UI features.</p>
       </div>
     `);
   }
 
-  if (route === 'form') {
+  if (route === '/form') {
     baseLayout(`
       <div class="bg-white p-6 rounded-xl shadow space-y-4">
-        <h1 class="text-xl font-bold">Form Inputs</h1>
-
-        <input type="text" placeholder="Enter name" class="w-full p-2 border rounded" />
-
+        <h1 class="text-xl font-bold">Form</h1>
+        <input type="text" placeholder="Name" class="w-full p-2 border rounded" />
         <input type="password" placeholder="Password" class="w-full p-2 border rounded" />
-
-        <select class="w-full p-2 border rounded">
-          <option>Select Option</option>
-          <option>A</option>
-          <option>B</option>
-        </select>
-
-        <textarea placeholder="Message" class="w-full p-2 border rounded"></textarea>
-
-        <label class="flex items-center gap-2">
-          <input type="checkbox" /> Accept Terms
-        </label>
-
         <button class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
       </div>
     `);
   }
 
-  if (route === 'widgets') {
+  if (route === '/widgets') {
     baseLayout(`
-      <div class="bg-white p-6 rounded-xl shadow space-y-4">
-        <h1 class="text-xl font-bold">UI Elements</h1>
-
-        <button class="bg-indigo-500 text-white px-4 py-2 rounded">Button</button>
-
-        <div class="p-4 bg-gray-200 rounded">Card Element</div>
-
-        <progress value="70" max="100" class="w-full"></progress>
-
-        <input type="range" min="0" max="100" class="w-full" />
-
-        <details>
-          <summary class="cursor-pointer">Expandable Section</summary>
-          <p class="mt-2">Hidden content shown on click</p>
-        </details>
+      <div class="bg-white p-6 rounded-xl shadow">
+        <h1 class="text-xl font-bold">Widgets</h1>
+        <progress value="60" max="100" class="w-full"></progress>
       </div>
     `);
   }
 }
 
-// initial load
-navigate('home');
+function navigate(route) {
+  history.pushState({}, '', route); // change URL
+  render(route);
+}
+
+// Handle back/forward
+window.onpopstate = () => {
+  render(location.pathname);
+};
+
+// Initial load
+render(location.pathname || '/home');
 </script>
 
 </body>
