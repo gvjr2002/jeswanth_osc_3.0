@@ -9,17 +9,15 @@
 </head>
 <body class="bg-gray-100 font-sans">
 
-<!-- Navbar -->
 <nav class="bg-white shadow p-4 flex justify-between">
   <div class="font-bold">Modern SPA</div>
   <div class="space-x-2">
-    <button onclick="navigate('/home')" class="px-3 py-1 bg-blue-500 text-white rounded">Home</button>
+    <button onclick="navigate('/')" class="px-3 py-1 bg-blue-500 text-white rounded">Home</button>
     <button onclick="navigate('/form')" class="px-3 py-1 bg-green-500 text-white rounded">Form</button>
     <button onclick="navigate('/widgets')" class="px-3 py-1 bg-purple-500 text-white rounded">Widgets</button>
   </div>
 </nav>
 
-<!-- App Root -->
 <div id="app" class="p-6 space-y-6"></div>
 
 <script>
@@ -28,16 +26,13 @@ const app = document.getElementById('app');
 function baseLayout(content) {
   app.innerHTML = `
     ${content}
-
     <div id="shadow-host"></div>
-
     <div class="bg-white p-4 rounded-xl shadow">
       <h2 class="font-bold mb-2">iFrame Section</h2>
       <iframe src="https://example.com" class="w-full h-64 border rounded"></iframe>
     </div>
   `;
 
-  // Shadow DOM
   const host = document.getElementById('shadow-host');
   const shadow = host.attachShadow({ mode: 'open' });
 
@@ -47,18 +42,20 @@ function baseLayout(content) {
     </style>
     <div class="box">
       <h3>Shadow DOM Widget</h3>
-      <p>URL changes but no reload</p>
+      <p>Home route = / (clean URL)</p>
     </div>
   `;
 }
 
 function render(route) {
-  if (route === '/home') {
+
+  if (route === '/') {
     baseLayout(`
       <div class="bg-white p-6 rounded-xl shadow">
         <h1 class="text-xl font-bold">Home</h1>
       </div>
     `);
+    return;
   }
 
   if (route === '/form') {
@@ -70,6 +67,7 @@ function render(route) {
         <button class="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
       </div>
     `);
+    return;
   }
 
   if (route === '/widgets') {
@@ -79,21 +77,24 @@ function render(route) {
         <progress value="60" max="100" class="w-full"></progress>
       </div>
     `);
+    return;
   }
+
+  // fallback (404 -> home)
+  navigate('/');
 }
 
 function navigate(route) {
-  history.pushState({}, '', route); // change URL
+  history.pushState({}, '', route);
   render(route);
 }
 
-// Handle back/forward
 window.onpopstate = () => {
   render(location.pathname);
 };
 
 // Initial load
-render(location.pathname || '/home');
+render(location.pathname);
 </script>
 
 </body>
